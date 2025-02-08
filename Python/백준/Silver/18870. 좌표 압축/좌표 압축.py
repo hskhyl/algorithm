@@ -1,35 +1,19 @@
 import sys
-import heapq
 
 def main():
     N = int(sys.stdin.readline().rstrip())
     n_list = list(map(int, sys.stdin.readline().rstrip().split()))
-    n_set = set(n_list)
     
-    n_list_sorted = []
-    n_dict = dict()
+    # set을 사용하여 중복 제거 후 sorted()로 정렬
+    sorted_unique_n_list = sorted(set(n_list))
     
-    for n in n_set:
-        heapq.heappush(n_list_sorted, n)
-        
-    for i in range(0, len(n_set)):
-        x = heapq.heappop(n_list_sorted)
-        n_dict[x] = f"{i}"
+    # 숫자에 대해 순위를 매기는 딕셔너리 생성
+    n_dict = {n: str(i) for i, n in enumerate(sorted_unique_n_list)}
     
-    target = []
-    
-    for n in n_list:
-        target.append(n_dict[n])
-    
-    answer = " ".join(target)
+    # 원본 리스트에 대해 순위를 매기고 출력
+    answer = " ".join(n_dict[n] for n in n_list)  # 여기서 n은 숫자, n_dict[n]은 숫자에 해당하는 순위
     
     print(answer)
 
 if __name__ == "__main__":
     main()
-        
-        
-        
-        
-        
-    
