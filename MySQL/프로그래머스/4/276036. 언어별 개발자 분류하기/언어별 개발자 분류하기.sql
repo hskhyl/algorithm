@@ -1,20 +1,18 @@
-WITH Front_CTE AS (
-    SELECT NAME, CODE
-    FROM SKILLCODES
-    WHERE CATEGORY = 'Front End'
-),
-TARGET AS (
+WITH TARGET_CODE AS (
     SELECT 
+        (SELECT SUM(CODE) FROM SKILLCODES WHERE CATEGORY = 'Front End') AS total_front,
+        (SELECT CODE FROM SKILLCODES WHERE NAME = 'Python') AS python_code,
+        (SELECT CODE FROM SKILLCODES WHERE NAME = 'C#') AS csharp_code
+)
+SELECT 
     CASE
-        WHEN (D.SKILL_CODE & 256 = 256) AND EXISTS (SELECT 1 FROM Front_CTE FC WHERE D.SKILL_CODE & FC.CODE = FC.CODE) THEN 'A'
-        WHEN (D.SKILL_CODE & 1024 = 1024) THEN 'B'
-        WHEN EXISTS (SELECT 1 FROM Front_CTE FC WHERE D.SKILL_CODE & FC.CODE = FC.CODE) THEN 'C'
+        WHEN (D.SKILL_CODE & TC.total_front) != 0 AND (D.SKILL_CODE & TC.python_code) != 0 THEN 'A'
+        WHEN (D.SKILL_CODE & TC.csharp_code) = TC.csharp_code THEN 'B'
+        ELSE 'C'
     END AS GRADE,
     D.ID,
     D.EMAIL
-    FROM DEVELOPERS D
-    ORDER BY 1, 2
-)
-SELECT *
-FROM TARGET
-WHERE GRADE IS NOT NULL
+FROM DEVELOPERS D, TARGET_CODE TC
+WHERE (D.SKILL_CODE & TC.csharp_code) = TC.csharp_code
+    OR (D.SKILL_CODE & TC.total_front) != 0
+ORDER BY 1, 2;
