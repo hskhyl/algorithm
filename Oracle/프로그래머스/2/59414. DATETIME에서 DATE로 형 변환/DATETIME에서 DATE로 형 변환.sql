@@ -1,0 +1,6 @@
+SELECT
+    ANIMAL_ID,
+    NAME,
+    TO_CHAR(DATETIME, 'yyyy-MM-dd') AS "날짜"
+FROM ANIMAL_INS
+ORDER BY 1
